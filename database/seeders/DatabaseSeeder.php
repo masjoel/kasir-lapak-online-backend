@@ -20,9 +20,9 @@ class DatabaseSeeder extends Seeder
     {
         // Buat user pertama
         $user = User::create([
-            'name' => 'Administrator',
+            'name' => 'Owner',
             'username' => 'admin',
-            'email' => 'admin@tokopojok.com',
+            'email' => 'owner@tokopojok.com',
             'password' => Hash::make('admin12345'),
             'roles' => 'admin',
         ]);
