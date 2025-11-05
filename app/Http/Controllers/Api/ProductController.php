@@ -91,7 +91,7 @@ class ProductController extends Controller
             ], 409);
         }
     }
-    // public function syncProducts(Request $request)
+    // public function syncProductsX(Request $request)
     // {
     //     $request->validate([
     //         'name' => 'required',
@@ -125,38 +125,57 @@ class ProductController extends Controller
     //         ], 409);
     //     }
     // }
-    // public function syncProductsX(Request $request)
-    // {
-    //     $request->validate([
-    //         'name' => 'required',
-    //         'price' => 'required',
-    //         'stock' => 'required',
-    //         'image' => 'nullable'
-    //     ]);
-
-    //     $product = Product::create([
-    //         'user_id' => $request->user_id,
-    //         'name' => $request->name,
-    //         'price' => (int) $request->price,
-    //         'stock' => (int) $request->stock,
-    //         'category' => $request->category,
-    //         'image' => $request->image,
-    //         'is_best_seller' => $request->isBestSeller
-    //     ]);
-
-    //     if ($product) {
-    //         return response()->json([
-    //             'success' => true,
-    //             'message' => 'Product Sync Success',
-    //             'data' => $product
-    //         ], 201);
-    //     } else {
-    //         return response()->json([
-    //             'success' => false,
-    //             'message' => 'Product Sync Failed to Save',
-    //         ], 409);
-    //     }
-    // }
+    public function syncProducts(Request $request)
+    {
+        $productsInput = $request->input('products', []);
+        // $products = $request->input('products', []);
+        // $productFiles = $request->file('products', []);
+        foreach ($productsInput as $i => $prod) {
+            // ambil file sesuai index
+            $file = $request->file("products.$i.image");
+            $filename = null;
+            if ($file && $file instanceof \Illuminate\Http\UploadedFile) {
+                $filename = Uuid::uuid1()->getHex() . '.' . $file->extension();
+                $file->storeAs('public/products', $filename);
+            }
+            Product::updateOrCreate(
+                ['uuid' => $prod['uuid']],
+                [
+                    'user_id' => $prod['user_id'],
+                    'product_id' => $prod['product_id'],
+                    'name' => $prod['name'],
+                    'hpp' => $prod['hpp'] ?? 0,
+                    'price' => $prod['price'] ?? 0,
+                    'stock' => $prod['stock'] ?? 0,
+                    'image' => $filename ?? null,
+                    'category' => $prod['category'],
+                    'category_id' => $prod['category_id'],
+                    'is_best_seller' => $prod['is_best_seller'] ?? 0,
+                    'satuan' => $prod['satuan'],
+                    'product_unit_id' => $prod['satuan_id'],
+                    'discount' => $prod['discount'] ?? 0,
+                    'is_discount' => $prod['is_discount'] ?? 0,
+                    'product_code' => $prod['product_code'] ?? null,
+                    'updated_at' => $prod['updated_at'] ?? now(),
+                    'deleted_at' => $prod['deleted_at'] ?? null,
+                ]
+            );
+        }
+        return response()->json(['status' => 'success']);
+    }
+    public function getUpdateProducts(Request $request)
+    {
+        $updatedAfter = $request->query('updated_after');
+        $query = Product::query();
+        if ($updatedAfter) {
+            $query->where('updated_at', '>', $updatedAfter);
+        }
+        $categories = $query->get();
+        return response()->json([
+            'status' => 'success',
+            'products' => $categories,
+        ]);
+    }
 
     /**
      * Display the specified resource.

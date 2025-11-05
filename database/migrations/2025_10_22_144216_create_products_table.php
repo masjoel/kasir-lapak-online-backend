@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('products', function (Blueprint $table) {
             $table->id(); 
+            $table->uuid('uuid')->unique();
             $table->unsignedBigInteger('user_id')->nullable();
             $table->unsignedBigInteger('product_id')->nullable();
             $table->string('name')->nullable();
@@ -22,7 +23,7 @@ return new class extends Migration
             $table->string('image')->nullable();
             $table->string('category')->nullable();
             $table->unsignedBigInteger('category_id')->nullable();
-            $table->boolean('is_best_seller')->nullable();
+            $table->boolean('is_best_seller')->default(0);
             $table->boolean('is_sync')->default(0);
             $table->string('satuan')->nullable();
             $table->unsignedBigInteger('product_unit_id')->nullable();
@@ -31,6 +32,7 @@ return new class extends Migration
             $table->text('keterangan')->nullable();
             $table->string('product_code')->nullable();
             $table->timestamps();
+            $table->softDeletes();
 
             $table->foreign('user_id')
                 ->references('id')

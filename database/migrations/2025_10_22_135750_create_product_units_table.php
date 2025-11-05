@@ -13,11 +13,13 @@ return new class extends Migration
     {
         Schema::create('product_units', function (Blueprint $table) {
             $table->id();
+            $table->uuid('uuid')->unique();
             $table->integer('user_id')->nullable();
             $table->string('name');
             $table->string('slug')->nullable();
             $table->string('keterangan')->nullable();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

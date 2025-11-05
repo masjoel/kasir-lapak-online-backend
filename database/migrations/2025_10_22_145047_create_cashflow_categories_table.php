@@ -13,26 +13,18 @@ return new class extends Migration
     {
         Schema::create('cashflow_categories', function (Blueprint $table) {
             $table->id(); 
-            $table->unsignedBigInteger('user_id')->nullable();
-            $table->string('name')->nullable();
+            $table->uuid('uuid')->unique();
+            $table->integer('user_id')->nullable();
+            $table->string('name');
             $table->string('type')->default('income'); 
             $table->text('keterangan')->nullable();
             $table->timestamps();
-
-            // 🔗 Relasi ke users
-            $table->foreign('user_id')
-                ->references('id')
-                ->on('users')
-                ->onDelete('set null');
+            $table->softDeletes();
         });
     }
 
     public function down(): void
     {
-        Schema::table('cashflow_categories', function (Blueprint $table) {
-            $table->dropForeign(['user_id']);
-        });
-
         Schema::dropIfExists('cashflow_categories');
     }
 };

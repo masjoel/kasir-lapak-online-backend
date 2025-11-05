@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::table('users', function (Blueprint $table) {
             $table->string('phone')->nullable()->after('email');
-            $table->enum('roles', ['admin', 'staff', 'user', 'kasir', 'reseller'])->default('user')->after('phone');
+            $table->enum('roles', ['admin', 'staff', 'user', 'kasir', 'reseller'])->default('kasir')->after('phone');
             $table->string('device_id')->nullable()->after('remember_token')->default('0');
             $table->string('marketing')->nullable()->after('device_id')->default('0');
             $table->string('booking_id')->after('marketing')->nullable();

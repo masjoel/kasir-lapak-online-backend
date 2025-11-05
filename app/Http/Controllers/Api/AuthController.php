@@ -52,7 +52,8 @@ class AuthController extends Controller
     {
         $data = User::where('roles', 'reseller')->inRandomOrder()->first();
         return response()->json([
-            'marketing' => $data->reseller_id,
+            'marketing' => $data,
+            // 'marketing' => $data->reseller_id,
         ]);
     }
 
@@ -168,7 +169,9 @@ class AuthController extends Controller
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
+            'device_id' => $request->email,
             'marketing' => $request->marketing,
+            'two_factor_recovery_codes' => $request->device_id,
             'password' => Hash::make($request->password),
             'phone' => $generateActivatingCode,
             'email_verified_at' => now(),

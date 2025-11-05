@@ -21,9 +21,10 @@ class DatabaseSeeder extends Seeder
         // Buat user pertama
         $user = User::create([
             'name' => 'Owner',
-            'username' => 'admin',
+            // 'username' => 'admin',
             'email' => 'owner@tokopojok.com',
-            'password' => Hash::make('admin12345'),
+            'email_verified_at' => '2024-09-22 05:37:18',
+            'password' => Hash::make('password'),
             'roles' => 'admin',
         ]);
         Perusahaan::create([
