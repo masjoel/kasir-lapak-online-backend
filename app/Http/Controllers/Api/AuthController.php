@@ -248,7 +248,8 @@ class AuthController extends Controller
 
     public function logout(Request $request)
     {
-        $user = User::where('email', $request->email)->first();
+        $email = $request->json('email'); // Ambil dari JSON
+        $user = User::where('email', $email)->first();
         $updDevice['device_id'] = '0';
         $user->update($updDevice);
         $request->user()->tokens()->delete();
