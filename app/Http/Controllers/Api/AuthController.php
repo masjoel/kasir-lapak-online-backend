@@ -254,7 +254,7 @@ class AuthController extends Controller
         $user->update($updDevice);
         $request->user()->tokens()->delete();
         return response()->json([
-            'message' => 'logout successfully',
+            'message' => 'logout successfully '.$email,
         ]);
     }
 }
