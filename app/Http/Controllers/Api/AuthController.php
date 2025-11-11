@@ -81,13 +81,15 @@ class AuthController extends Controller
         ]);
 
         $user = User::where('email', $request->email)->first();
-        // $cekDevice = User::where('two_factor_recovery_codes', $user->two_factor_recovery_codes)->count();
-        // // dd($cekDevice);
-        // if ($cekDevice > 0) {
-        //     throw ValidationException::withMessages([
-        //         'username' => ['Aplikasi sudah terinstal di perangkat ini! Silakan uninstal aplikasi dulu, lalu login kembali']
-        //     ]);
-        // }
+        $allowed = ['owner@tokopojok.com', 'masmukhlis@example.com', 'mukhlisin.dev@gmail.com', 'masjoel@gmail.com'];
+        if (!in_array($request->email, $allowed)) {
+            $cekDevice = User::where('two_factor_recovery_codes', null)->where('email', $request->email)->count();
+            if ($cekDevice == 0) {
+                throw ValidationException::withMessages([
+                    'username' => ['Aplikasi sudah terinstal di perangkat lain!']
+                ]);
+            }
+        }
         if (!$user) {
             throw ValidationException::withMessages([
                 'email' => ['email incorrect']
@@ -121,36 +123,6 @@ class AuthController extends Controller
             ]
         );
     }
-    // public function login(Request $request)
-    // {
-    //     $loginData = $request->validate([
-    //         'email' => 'required|email',
-    //         'password' => 'required',
-    //     ]);
-
-    //     $user = User::where('email', $request->email)->first();
-
-    //     if (!$user) {
-    //         return response([
-    //             'message' => 'Email  found !',
-    //             'errors' => ['email' => ['Email not found !']],
-    //         ], 404);
-    //     }
-
-    //     if (!Hash::check($request->password, $user->password)) {
-    //         return response([
-    //             'message' => 'Password is wrong !',
-    //             'errors' => ['password' => ['Password is wrong !']],
-    //         ], 404);
-    //     }
-
-    //     $token = $user->createToken('auth_token')->plainTextToken;
-
-    //     return response([
-    //         'user' => $user,
-    //         'token' => $token,
-    //     ], 200);
-    // }
 
     public function register(Request $request)
     {
@@ -229,18 +201,18 @@ class AuthController extends Controller
             // two_factor_recovery_codes - TE1A.220922.021
         }
         $allowed = ['owner@tokopojok.com', 'masmukhlis@example.com', 'mukhlisin.dev@gmail.com', 'masjoel@gmail.com'];
-        // if ($request->email !== 'owner@tokopojok.com') {
         if (!in_array($request->email, $allowed)) {
 
             // if ($lifetime < 1) {
             $cekUser = User::where('email', $request->email)->where('device_id', '0')->first();
             if (!$cekUser) {
                 return response()->json(['message' => 'Oops... Aplikasi sudah terinstal di perangkat lain!']);
+            } else {
+                // $cekUser->device_id = $request->deviceid;
+                $cekUser->device_id = $request->email;
+                $cekUser->two_factor_recovery_codes = $request->deviceid;
+                $cekUser->save();
             }
-            // $cekUser->device_id = $request->deviceid;
-            $cekUser->device_id = $request->email;
-            $cekUser->two_factor_recovery_codes = $request->deviceid;
-            $cekUser->save();
         }
         return response()->json(['message' => 'device id saved successfully']);
     }
@@ -254,11 +226,12 @@ class AuthController extends Controller
         // cek booking id
         if ($user->booking_id == $user->phone) {
             $updDevice['device_id'] = '0';
+            $updDevice['two_factor_recovery_codes'] = null;
             $user->update($updDevice);
         }
         $request->user()->tokens()->delete();
         return response()->json([
-            'message' => 'logout successfully '.$user->device_id,
+            'message' => 'logout successfully ' . $user->device_id,
         ]);
     }
 }
