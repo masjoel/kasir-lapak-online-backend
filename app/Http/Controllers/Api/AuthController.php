@@ -248,13 +248,17 @@ class AuthController extends Controller
 
     public function logout(Request $request)
     {
-        $email = $request->json('email'); // Ambil dari JSON
+        // $email = $request->json('email'); // Ambil dari JSON
+        $email = $request->email;
         $user = User::where('email', $email)->first();
-        $updDevice['device_id'] = '0';
-        $user->update($updDevice);
+        // cek booking id
+        if ($user->booking_id == $user->phone) {
+            $updDevice['device_id'] = '0';
+            $user->update($updDevice);
+        }
         $request->user()->tokens()->delete();
         return response()->json([
-            'message' => 'logout successfully '.$email,
+            'message' => 'logout successfully '.$user->device_id,
         ]);
     }
 }
