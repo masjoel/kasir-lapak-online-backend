@@ -7,18 +7,23 @@ use App\Models\Order;
 use App\Models\Product;
 use App\Models\OrderItem;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class DashboardController extends Controller
 {
     public function index(Request $request)
     {
-        $users = User::orderBy('id', 'desc')
-            ->where('email', '!=', 'owner@tokopojok.com')->where('booking_id', NULL)
-            ->when($request->input('name'), function ($query, $name) {
-                return $query->where('name', 'like', '%' . $name . '%')->orWhere('email', 'like', '%' . $name . '%')->orWhere('phone', 'like', '%' . $name . '%');
-            })
-            ->paginate(10);
+        if (Auth::user()->email == 'owner@tokopojok.com') {
+            $users = User::orderBy('id', 'desc')
+                ->where('email', '!=', 'owner@tokopojok.com')->where('booking_id', NULL)
+                ->when($request->input('name'), function ($query, $name) {
+                    return $query->where('name', 'like', '%' . $name . '%')->orWhere('email', 'like', '%' . $name . '%')->orWhere('phone', 'like', '%' . $name . '%');
+                })
+                ->paginate(10);
+        } else {
+            $users = User::where('email', Auth::user()->email)->paginate(10);
+        }
         $title = 'Dashboard';
         return view('pages.dboard', compact('title', 'users'));
     }

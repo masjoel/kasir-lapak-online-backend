@@ -47,7 +47,9 @@
                                                 <th>Roles</th>
                                                 <th>Reseller</th>
                                                 <th>Created At</th>
-                                                <th class="text-center">Action</th>
+                                                @if (auth()->user()->email == 'owner@tokopojok.com')
+                                                    <th class="text-center">Action</th>
+                                                @endif
                                             </tr>
                                             @foreach ($users as $user)
                                                 <tr>
@@ -57,14 +59,15 @@
                                                     <td>{{ ucwords($user->roles) }}</td>
                                                     <td>{{ $user->marketing }}</td>
                                                     <td>{{ $user->created_at }}</td>
-                                                    <td>
-                                                        <div class="d-flex justify-content-center">
-                                                            <a href='/konfirmasi/{{ $user->phone }}'
-                                                                class="btn btn-sm btn-warning btn-icon" target="_blank">
-                                                                <i class="fas fa-edit"></i>
-                                                                Approval
-                                                            </a>
-                                                            {{-- <a href='{{ route('user.edit', $user->id) }}'
+                                                    @if (auth()->user()->email == 'owner@tokopojok.com')
+                                                        <td>
+                                                            <div class="d-flex justify-content-center">
+                                                                <a href='/konfirmasi/{{ $user->phone }}'
+                                                                    class="btn btn-sm btn-warning btn-icon" target="_blank">
+                                                                    <i class="fas fa-edit"></i>
+                                                                    Approval
+                                                                </a>
+                                                                {{-- <a href='{{ route('user.edit', $user->id) }}'
                                                             class="btn btn-sm btn-info btn-icon">
                                                             <i class="fas fa-edit"></i>
                                                             Edit
@@ -74,8 +77,9 @@
                                                             <i class="fas fa-times"></i>
                                                             Delete
                                                         </a> --}}
-                                                        </div>
-                                                    </td>
+                                                            </div>
+                                                        </td>
+                                                    @endif
                                                 </tr>
                                             @endforeach
 
