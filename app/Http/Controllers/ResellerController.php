@@ -37,6 +37,7 @@ class ResellerController extends Controller
         if (Auth::user()->email == 'owner@tokopojok.com') {
             return view('pages.users.referral', compact('title', 'orders', 'sortDirection', 'referral', 'potensiKomisi', 'totalKomisi', 'bayarKomisi', 'viewer'));
         } else {
+            $users = User::where('email', Auth::user()->email)->paginate(10);
             return view('pages.dboard', compact('title', 'users'));
         }
     }
