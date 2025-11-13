@@ -70,7 +70,9 @@
                                             <th>Status</th>
                                             <th>Reseller</th>
                                             <th>Created At</th>
-                                            <th>Action</th>
+                                            @if (auth()->user()->email == 'owner@tokopojok.com')
+                                                <th>Action</th>
+                                            @endif
                                         </tr>
                                         @foreach ($users as $user)
                                             <tr>
@@ -87,19 +89,22 @@
                                                 </td>
                                                 <td>{{ $user->marketing }}</td>
                                                 <td>{{ $user->created_at }}</td>
-                                                <td>
-                                                    <div class="d-flex justify-content-center">
-                                                        <a href='{{ route('user.edit', $user->id) }}'
-                                                            class="btn btn-sm btn-info btn-icon">
-                                                            <i class="fas fa-edit"></i>
-                                                            Edit
-                                                        </a>
-                                                        <a href='#' id="delete-data" data-id="{{ $user->id }}" class="ml-2 btn btn-sm btn-danger btn-icon">
-                                                            <i class="fas fa-times"></i>
-                                                            Delete
-                                                        </a>
+                                                @if (auth()->user()->email == 'owner@tokopojok.com')
+                                                    <td>
+                                                        <div class="d-flex justify-content-center">
+                                                            <a href='{{ route('user.edit', $user->id) }}'
+                                                                class="btn btn-sm btn-info btn-icon">
+                                                                <i class="fas fa-edit"></i>
+                                                                Edit
+                                                            </a>
+                                                            <a href='#' id="delete-data"
+                                                                data-id="{{ $user->id }}"
+                                                                class="ml-2 btn btn-sm btn-danger btn-icon">
+                                                                <i class="fas fa-times"></i>
+                                                                Delete
+                                                            </a>
 
-                                                        {{-- <form action="{{ route('user.destroy', $user->id) }}"
+                                                            {{-- <form action="{{ route('user.destroy', $user->id) }}"
                                                             method="POST" class="ml-2">
                                                             <input type="hidden" name="_method" value="DELETE" />
                                                             <input type="hidden" name="_token"
@@ -108,8 +113,9 @@
                                                                 <i class="fas fa-times"></i> Delete
                                                             </a>
                                                         </form> --}}
-                                                    </div>
-                                                </td>
+                                                        </div>
+                                                    </td>
+                                                @endif
                                             </tr>
                                         @endforeach
 

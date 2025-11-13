@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Helpers\AutoNumberHelper;
 use App\Models\User;
 use Illuminate\Http\Request;
+use App\Helpers\AutoNumberHelper;
 use Illuminate\Support\Facades\DB;
 use App\Http\Requests\StoreUserReq;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use App\Http\Requests\UpdateUserRequest;
 
@@ -14,12 +15,16 @@ class UserController extends Controller
 {
     public function index(Request $request)
     {
+        if (Auth::user()->email == 'owner@tokopojok.com') {
         $users = User::orderBy('id', 'desc')
             ->where('email', '!=', 'owner@tokopojok.com')
             ->when($request->input('name'), function ($query, $name) {
                 return $query->where('name', 'like', '%' . $name . '%')->orWhere('email', 'like', '%' . $name . '%')->orWhere('phone', 'like', '%' . $name . '%')->orWhere('roles', 'like', '%' . $name . '%');
             })
             ->paginate(10);
+        } else {
+            $users = User::where('email', Auth::user()->email)->paginate(10);
+        }
         return view('pages.users.index', compact('users'));
     }
 
