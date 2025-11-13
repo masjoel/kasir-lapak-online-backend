@@ -19,7 +19,7 @@ class ResellerController extends Controller
         $cari = $request->input('search') ?: Auth::user()->email;
         $resellerId = User::when($cari, function ($query, $search) {
             return $query->where('email', '=', $search);
-        })->first()->reseller_id;
+        })->first()->reseller_id ?? Auth::user()->reseller_id;
 
         $title = 'Dashboard';
         $sortField = $request->input('sort_field') == 'status' ? 'booking_id' : $request->input('sort_field', 'id');
