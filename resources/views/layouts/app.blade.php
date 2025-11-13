@@ -8,6 +8,7 @@
     <title>@yield('title') &mdash; App</title>
 
     <!-- General CSS Files -->
+    <link rel="shortcut icon" href="{{ asset('img/logo-kasir-lapak.webp') }}" type="image/x-icon" />
     <link rel="stylesheet" href="{{ asset('library/sweetalert2/sweetalert2.min.css') }}">
     <link rel="stylesheet" href="{{ asset('library/bootstrap/dist/css/bootstrap.min.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css"
@@ -65,6 +66,7 @@
 
     <script>
         let BASE_URL = "https://{{ $_SERVER['HTTP_HOST'] }}";
+
         function showAlertOnSubmit(params, modal, table, reload, reloadBlank) {
             if (params.status == 'success') {
                 setTimeout(function() {
