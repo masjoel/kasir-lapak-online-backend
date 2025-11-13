@@ -62,21 +62,16 @@
                                                     @if (auth()->user()->email == 'owner@tokopojok.com')
                                                         <td>
                                                             <div class="d-flex justify-content-center">
-                                                                <a href='/konfirmasi/{{ $user->phone }}'
-                                                                    class="btn btn-sm btn-warning btn-icon" target="_blank">
-                                                                    <i class="fas fa-edit"></i>
-                                                                    Approval
-                                                                </a>
-                                                                {{-- <a href='{{ route('user.edit', $user->id) }}'
-                                                            class="btn btn-sm btn-info btn-icon">
-                                                            <i class="fas fa-edit"></i>
-                                                            Edit
-                                                        </a>
-                                                        <a href='#' id="delete-data" data-id="{{ $user->id }}"
-                                                            class="ml-2 btn btn-sm btn-danger btn-icon">
-                                                            <i class="fas fa-times"></i>
-                                                            Delete
-                                                        </a> --}}
+                                                                @if ($user->phone == $user->booking_id)
+                                                                    <span class="badge badge-primary">Lifetime</span>
+                                                                @else
+                                                                    <a href='/konfirmasi/{{ $user->phone }}'
+                                                                        class="btn btn-sm btn-warning btn-icon"
+                                                                        target="_blank">
+                                                                        <i class="fas fa-edit"></i>
+                                                                        Approval
+                                                                    </a>
+                                                                @endif
                                                             </div>
                                                         </td>
                                                     @endif
