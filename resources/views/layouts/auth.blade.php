@@ -8,6 +8,9 @@
     <title>@yield('title') &mdash; App</title>
 
     <!-- General CSS Files -->
+    <link rel="shortcut icon"
+        href="{{ asset('img/logo-kasir-lapak.webp') }}"
+        type="image/x-icon" />
     <link rel="stylesheet"
         href="{{ asset('library/bootstrap/dist/css/bootstrap.min.css') }}">
     <link rel="stylesheet"
