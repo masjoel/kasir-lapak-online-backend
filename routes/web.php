@@ -6,6 +6,7 @@ use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\AutoNumberController;
+use App\Http\Controllers\ResellerController;
 
 /*
 |--------------------------------------------------------------------------
@@ -30,6 +31,8 @@ Route::middleware(['auth'])->group(function () {
     Route::get('home', [DashboardController::class, 'index'])->name('home');
     Route::post('home', [DashboardController::class, 'index'])->name('home.post');
     Route::resource('user', UserController::class);
+    Route::resource('reseller', ResellerController::class);
+    Route::post('/reseller/bayar', [ResellerController::class, 'bayar'])->name('reseller.bayar');
     Route::resource('product', ProductController::class);
     Route::resource('order', OrderController::class);
 });

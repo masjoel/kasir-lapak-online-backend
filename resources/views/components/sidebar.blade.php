@@ -11,7 +11,11 @@
                 <a href="{{ route('home') }}" class="nav-link {{ Request::is('dashboard*') ? 'active' : '' }}"><i
                         class="fas fa-dashboard"></i><span>Dashboard</span></a>
             </li>
-            @if (auth()->user()->roles == 'admin' || auth()->user()->roles == 'reseller')
+            @if (auth()->user()->roles == 'admin')
+                <li class="nav-item">
+                    <a href="{{ route('reseller.index') }}" class="nav-link {{ Request::is('reseller') ? 'active' : '' }}"><i
+                            class="fas fa-users"></i><span>Reseller</span></a>
+                </li>
                 <li class="nav-item">
                     <a href="{{ route('user.index') }}" class="nav-link {{ Request::is('user') ? 'active' : '' }}"><i
                             class="fas fa-users"></i><span>Users</span></a>
