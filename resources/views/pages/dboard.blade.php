@@ -60,7 +60,7 @@
                                                     <td>{{ $user->marketing }}</td>
                                                     <td>{{ $user->created_at }}</td>
                                                     @if (auth()->user()->email == 'owner@tokopojok.com')
-                                                        <td>
+                                                        <td class="text-nowrap">
                                                             <div class="d-flex justify-content-center">
                                                                 @if ($user->phone == $user->booking_id)
                                                                     <span class="badge badge-primary">Lifetime</span>
@@ -72,6 +72,12 @@
                                                                         Approval
                                                                     </a>
                                                                 @endif
+                                                                @if ($user->device_id == 0)
+                                                                    <span class="badge badge-secondary ml-2">Logout</span>
+                                                                @else
+                                                                    <span class="badge badge-success ml-2" ms-2>Login</span>
+                                                                @endif
+
                                                             </div>
                                                         </td>
                                                     @endif
