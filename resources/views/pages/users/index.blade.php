@@ -80,7 +80,7 @@
                                                 </td>
                                                 <td>{{ $user->email }}</td>
                                                 <td>{{ ucwords($user->roles) }}</td>
-                                                <td>
+                                                <td class="text-nowrap">
                                                     @if ($user->phone == $user->booking_id)
                                                         <span class="badge badge-primary">Lifetime</span>
                                                     @else
@@ -89,7 +89,7 @@
                                                     @if ($user->device_id == 0)
                                                         <span class="badge badge-secondary">Logout</span>
                                                     @else
-                                                        <span class="badge badge-primary">Login</span>
+                                                        <span class="badge badge-success">Login</span>
                                                     @endif
                                                 </td>
                                                 <td>{{ $user->marketing }}</td>
