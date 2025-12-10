@@ -86,6 +86,8 @@
                                                     @else
                                                         <span class="badge badge-danger">Trial</span>
                                                     @endif
+                                                    @if ($user->device_id == 0) <span class="badge badge-primary">Login</span> 
+                                                    @else <span class="badge badge-secondary">Logout</span> @endif
                                                 </td>
                                                 <td>{{ $user->marketing }}</td>
                                                 <td>{{ $user->created_at }}</td>
