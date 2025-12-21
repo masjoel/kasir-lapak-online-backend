@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use App\Models\Reseller;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
@@ -20,7 +21,6 @@ class ResellerController extends Controller
         $resellerId = User::when($cari, function ($query, $search) {
             return $query->where('email', '=', $search);
         })->first()->reseller_id ?? Auth::user()->reseller_id;
-
         $title = 'Dashboard';
         $sortField = $request->input('sort_field') == 'status' ? 'booking_id' : $request->input('sort_field', 'id');
         $sortDirection = $request->input('sort_order', 'desc');
@@ -31,11 +31,21 @@ class ResellerController extends Controller
         $potensiKomisi = $referral * 50000;
         $totalKomisi = $komisi * 50000;
         $bayarKomisi = $isBayar * 50000;
-        $orders = User::where('marketing', $resellerId)
-            ->orderBy($sortField, $sortDirection)
-            ->paginate(10);
+        if (Str::contains($cari, '@')) {
+            $users = User::where('marketing', $resellerId)
+                ->orderBy($sortField, $sortDirection)
+                ->paginate(10);
+        } else {
+            $users = User::where('marketing', $resellerId)
+                ->when($request->input('search'), function ($query, $name) {
+                    return $query->where('name', 'like', '%' . $name . '%')->orWhere('email', 'like', '%' . $name . '%')->orWhere('phone', 'like', '%' . $name . '%');
+                })
+                ->orderBy($sortField, $sortDirection)
+                ->paginate(10);
+        }
+
         if (Auth::user()->email == 'owner@tokopojok.com') {
-            return view('pages.users.referral', compact('title', 'orders', 'sortDirection', 'referral', 'potensiKomisi', 'totalKomisi', 'bayarKomisi', 'viewer'));
+            return view('pages.users.referral', compact('title', 'users', 'sortDirection', 'referral', 'potensiKomisi', 'totalKomisi', 'bayarKomisi', 'viewer'));
         } else {
             $users = User::where('email', Auth::user()->email)->paginate(10);
             return view('pages.dboard', compact('title', 'users'));

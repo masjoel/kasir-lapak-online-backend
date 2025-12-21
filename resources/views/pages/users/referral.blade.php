@@ -88,7 +88,7 @@
                                 </div>
                             </form>
                         </div>
-                        @if ($orders->isEmpty())
+                        @if ($users->isEmpty())
                             <p class="text-center text-muted">Belum ada pembeli dari link Anda.</p>
                         @else
                             <table class="table table-bordered table-striped">
@@ -107,13 +107,13 @@
                                 </thead>
                                 <tbody>
                                     @php $limit = 10; @endphp
-                                    @foreach ($orders as $index => $order)
+                                    @foreach ($users as $index => $order)
                                         @php
                                             $komisi = $order->phone == $order->booking_id ? 50000 : 0;
                                             $status = $komisi > 0 ? 'lifetime' : 'trial';
                                         @endphp
                                         <tr>
-                                            <td>{{ $limit * $orders->currentPage() - $limit + $index + 1 }}</td>
+                                            <td>{{ $limit * $users->currentPage() - $limit + $index + 1 }}</td>
                                             <td>{{ $order->name ?? '-' }}</td>
                                             <td>{{ $order->email ?? '-' }}</td>
                                             <td class="text-center">
@@ -139,8 +139,8 @@
                             </table>
                         @endif
                         <div class="my-5 content-center">
-                            {{-- {{ $orders->links() }} --}}
-                            {{ $orders->withQueryString()->links() }}
+                            {{-- {{ $users->links() }} --}}
+                            {{ $users->withQueryString()->links() }}
                         </div>
                     </div>
                 </div>
