@@ -95,7 +95,7 @@
                                                 <td>{{ $user->marketing }}</td>
                                                 <td>{{ $user->created_at }}</td>
                                                 @if (auth()->user()->email == 'owner@tokopojok.com')
-                                                    <td>
+                                                    <td class="text-nowrap">
                                                         <div class="d-flex justify-content-center">
                                                             <a href='{{ route('user.edit', $user->id) }}'
                                                                 class="btn btn-sm btn-info btn-icon">
