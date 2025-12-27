@@ -83,11 +83,6 @@ class AuthController extends Controller
         $user = User::where('email', $request->email)->first();
         $allowed = ['owner@tokopojok.com', 'masmukhlis@example.com', 'mukhlisin.dev@gmail.com', 'masjoel@gmail.com'];
         if (!in_array($request->email, $allowed)) {
-            // hitung selisih tanggal created_at dengan hari ini
-            $diff = now()->diffInDays($user->created_at);
-            // $cekDevice = User::where('email', $request->email)->count();
-            // if ($diff > 7) {
-            // }
             $cekDevice = User::where('two_factor_recovery_codes', null)->where('email', $request->email)->count();
             if ($cekDevice == 0) {
                 throw ValidationException::withMessages([
@@ -228,13 +223,17 @@ class AuthController extends Controller
         // $email = $request->json('email'); // Ambil dari JSON
         $email = $request->email;
         $user = User::where('email', $email)->first();
+        // hitung selisih tanggal created_at dengan hari ini
+        // $diff = now()->diffInDays($user->created_at);
+        // if ($diff > 7) {
+        // }
         // cek booking id
-        if ($user->booking_id == $user->phone) {
+        // if ($user->booking_id == $user->phone) {
             $updDevice['device_id'] = '0';
             $updDevice['two_factor_secret'] = $user->two_factor_recovery_codes;
             $updDevice['two_factor_recovery_codes'] = null;
             $user->update($updDevice);
-        }
+        // }
         $request->user()->tokens()->delete();
         return response()->json([
             'message' => 'logout successfully ' . $user->device_id,
