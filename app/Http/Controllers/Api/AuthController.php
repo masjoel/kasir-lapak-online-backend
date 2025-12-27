@@ -232,7 +232,9 @@ class AuthController extends Controller
             'two_factor_recovery_codes' => null,
         ]);
         // Hapus semua token
-        $user->tokens()->delete();
+        // $user->tokens()->delete();
+        $request->user()->currentAccessToken()->delete();
+
         return response()->json([
             'message' => 'Logout successfully'
         ], 200);
