@@ -217,27 +217,47 @@ class AuthController extends Controller
         return response()->json(['message' => 'device id saved successfully']);
     }
 
-
     public function logout(Request $request)
     {
-        // $email = $request->json('email'); // Ambil dari JSON
-        $email = $request->email;
-        $user = User::where('email', $email)->first();
-        // hitung selisih tanggal created_at dengan hari ini
-        // $diff = now()->diffInDays($user->created_at);
-        // if ($diff > 7) {
-        // }
-        // cek booking id
-        if ($user->booking_id == $user->phone) {
-        // if ($user->phone !== null) {
-            $updDevice['device_id'] = '0';
-            $updDevice['two_factor_secret'] = $user->two_factor_recovery_codes;
-            $updDevice['two_factor_recovery_codes'] = null;
-            $user->update($updDevice);
+        $user = $request->user();
+        if (!$user) {
+            return response()->json([
+                'message' => 'Unauthenticated'
+            ], 401);
         }
-        $request->user()->tokens()->delete();
-        return response()->json([
-            'message' => 'logout successfully ' . $user->device_id,
+        // Update device info
+        $user->update([
+            'device_id' => '0',
+            'two_factor_secret' => $user->two_factor_recovery_codes,
+            'two_factor_recovery_codes' => null,
         ]);
+        // Hapus semua token
+        $user->tokens()->delete();
+        return response()->json([
+            'message' => 'Logout successfully'
+        ], 200);
     }
+
+    // public function logout(Request $request)
+    // {
+    //     // $email = $request->json('email'); // Ambil dari JSON
+    //     $email = $request->email;
+    //     $user = User::where('email', $email)->first();
+    //     // hitung selisih tanggal created_at dengan hari ini
+    //     // $diff = now()->diffInDays($user->created_at);
+    //     // if ($diff > 7) {
+    //     // }
+    //     // cek booking id
+    //     if ($user->booking_id == $user->phone) {
+    //     // if ($user->phone !== null) {
+    //         $updDevice['device_id'] = '0';
+    //         $updDevice['two_factor_secret'] = $user->two_factor_recovery_codes;
+    //         $updDevice['two_factor_recovery_codes'] = null;
+    //         $user->update($updDevice);
+    //     }
+    //     $request->user()->tokens()->delete();
+    //     return response()->json([
+    //         'message' => 'logout successfully ' . $user->device_id,
+    //     ]);
+    // }
 }
