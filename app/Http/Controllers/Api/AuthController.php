@@ -228,8 +228,8 @@ class AuthController extends Controller
         // if ($diff > 7) {
         // }
         // cek booking id
-        // if ($user->booking_id == $user->phone) {
-        if ($user->phone !== null) {
+        if ($user->booking_id == $user->phone) {
+        // if ($user->phone !== null) {
             $updDevice['device_id'] = '0';
             $updDevice['two_factor_secret'] = $user->two_factor_recovery_codes;
             $updDevice['two_factor_recovery_codes'] = null;
