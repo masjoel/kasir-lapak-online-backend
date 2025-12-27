@@ -83,11 +83,15 @@ class AuthController extends Controller
         $user = User::where('email', $request->email)->first();
         $allowed = ['owner@tokopojok.com', 'masmukhlis@example.com', 'mukhlisin.dev@gmail.com', 'masjoel@gmail.com'];
         if (!in_array($request->email, $allowed)) {
-            $cekDevice = User::where('two_factor_recovery_codes', null)->where('email', $request->email)->count();
-            if ($cekDevice == 0) {
-                throw ValidationException::withMessages([
-                    'username' => ['Aplikasi sudah terinstal di perangkat lain!']
-                ]);
+            // hitung selisih tanggal created_at dengan hari ini
+            $diff = now()->diffInDays($user->created_at);
+            if ($diff > 7) {
+                $cekDevice = User::where('two_factor_recovery_codes', null)->where('email', $request->email)->count();
+                if ($cekDevice == 0) {
+                    throw ValidationException::withMessages([
+                        'username' => ['Aplikasi sudah terinstal di perangkat lain!']
+                    ]);
+                }
             }
         }
         if (!$user) {
