@@ -229,11 +229,12 @@ class AuthController extends Controller
         // }
         // cek booking id
         // if ($user->booking_id == $user->phone) {
-        $updDevice['device_id'] = '0';
-        $updDevice['two_factor_secret'] = $user->two_factor_recovery_codes;
-        $updDevice['two_factor_recovery_codes'] = null;
-        $user->update($updDevice);
-        // }
+        if ($user->phone !== null) {
+            $updDevice['device_id'] = '0';
+            $updDevice['two_factor_secret'] = $user->two_factor_recovery_codes;
+            $updDevice['two_factor_recovery_codes'] = null;
+            $user->update($updDevice);
+        }
         $request->user()->tokens()->delete();
         return response()->json([
             'message' => 'logout successfully ' . $user->device_id,
