@@ -38,6 +38,33 @@ class RegistrationController extends Controller
             'data' => $user,
         ], 201);
     }
+    public function storeTokopojok(Request $request)
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:100',
+            'email' => 'required|email|unique:users,email',
+            'marketing' => 'required|string|max:7',
+            'password' => 'required|string',
+        ]);
+        $generateActivatingCode = Uuid::uuid1()->getHex();
+
+        // Simpan ke database
+        $user = User::create([
+            'name' => $validated['name'],
+            'email' => $validated['email'],
+            'marketing' => $validated['marketing'],
+            'password' => $validated['password'],
+            'phone' => $generateActivatingCode,
+            'email_verified_at' => now(),
+            'roles' => 'kasir',
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Registrasi berhasil',
+            'data' => $user,
+        ], 201);
+    }
 
     public function dataReseller(Request $request)
     {
