@@ -55,6 +55,7 @@ class RegistrationController extends Controller
             'marketing' => $validated['marketing'],
             'password' => $validated['password'],
             'phone' => $generateActivatingCode,
+            'booking_id' => $generateActivatingCode,
             'email_verified_at' => now(),
             'roles' => 'kasir',
         ]);
