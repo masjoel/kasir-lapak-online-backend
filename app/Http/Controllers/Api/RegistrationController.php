@@ -48,18 +48,28 @@ class RegistrationController extends Controller
         ]);
         $generateActivatingCode = Uuid::uuid1()->getHex();
 
-        // Simpan ke database
-        $user = User::create([
-            'name' => $validated['name'],
-            'email' => $validated['email'],
-            'marketing' => $validated['marketing'],
-            'password' => $validated['password'],
-            'phone' => $generateActivatingCode,
-            'booking_id' => $generateActivatingCode,
-            'email_verified_at' => now(),
-            'roles' => 'kasir',
-        ]);
-
+        $cekEmail = User::where('email', $validated['email'])->first();
+        if ($cekEmail) {
+            // Update database
+            $user = User::updated([
+                'two_factor_recovery_codes' => null,
+                'device_id' => 0,
+                'booking_id' => $cekEmail->phone,
+                'email_verified_at' => now(),
+            ]);
+        } else {
+            // Simpan ke database
+            $user = User::create([
+                'name' => $validated['name'],
+                'email' => $validated['email'],
+                'marketing' => $validated['marketing'],
+                'password' => $validated['password'],
+                'phone' => $generateActivatingCode,
+                'booking_id' => $generateActivatingCode,
+                'email_verified_at' => now(),
+                'roles' => 'kasir',
+            ]);
+        }
         return response()->json([
             'success' => true,
             'message' => 'Registrasi berhasil',
