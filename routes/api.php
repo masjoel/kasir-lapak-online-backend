@@ -45,4 +45,4 @@ Route::post('/sync/cash_categories', [CategoryController::class, 'syncCashCatego
 Route::get('/sync/cash_categories', [CategoryController::class, 'getUpdateCashCategories']);
 Route::post('/sync/products', [ProductController::class, 'syncProducts'])->middleware('auth:sanctum');
 Route::get('/sync/products', [ProductController::class, 'getUpdateProducts']);
-Route::post('/verify-type', [AuthController::class, 'verifyType'])->middleware('auth:sanctum');
+Route::get('/verify-type', [AuthController::class, 'verifyType'])->middleware('auth:sanctum');
