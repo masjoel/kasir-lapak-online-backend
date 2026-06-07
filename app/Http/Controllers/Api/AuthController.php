@@ -114,14 +114,13 @@ class AuthController extends Controller
         }
 
         $token = $user->createToken('auth_token')->plainTextToken;
+        $typeToken = hash_hmac('sha256', $user->id . $user->is_type, config('app.key'));
 
-        return response()->json(
-            [
-                'token' => $token,
-                'user' => $user,
-                // 'user' => new UserResource($user),
-            ]
-        );
+        return response()->json([
+            'token'      => $token,
+            'type_token' => $typeToken,
+            'user'       => $user,
+        ]);
     }
 
     public function register(Request $request)
@@ -262,4 +261,17 @@ class AuthController extends Controller
     //         'message' => 'logout successfully ' . $user->device_id,
     //     ]);
     // }
+
+    // Route: GET /api/verify-type (pakai middleware auth:sanctum)
+    public function verifyType(Request $request)
+    {
+        $user      = $request->user();
+        $typeToken = hash_hmac('sha256', $user->id . $user->is_type, config('app.key'));
+
+        return response()->json([
+            'is_type'    => $user->is_type,
+            'type_token' => $typeToken,
+            'last_sync'  => now(),
+        ]);
+    }
 }
