@@ -15,10 +15,12 @@ return new class extends Migration
         Schema::table('users', function (Blueprint $table) {
             $table->integer('is_type')->after('is_bayar')->default(0);
         });
-        // Update is_type = 2 jika booking_id tidak null
+        DB::table('users')
+            ->where('email', 'owner@tokopojok.com')
+            ->update(['is_type' => 3]);
         DB::table('users')
             ->whereNotNull('booking_id')
-            ->update(['is_type' => 2]);
+            ->update(['is_type' => 3]);
     }
 
     /**
