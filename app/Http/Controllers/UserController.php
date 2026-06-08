@@ -63,9 +63,19 @@ class UserController extends Controller
         $user->update($data);
         return redirect()->route('user.index')->with('success', 'User successfully updated');
     }
+    public function starter($confirmation_code)
+    {
+        $user = User::where('phone', $confirmation_code)->update(['booking_id' => $confirmation_code, 'device_id' => '0', 'email_verified_at' => now(), 'is_type' => '1']);
+        return redirect()->route('register.success')->with('success', 'Akun Anda sudah aktif, silahkan login di aplikasi Kasir');
+    }
+    public function basic($confirmation_code)
+    {
+        $user = User::where('phone', $confirmation_code)->update(['booking_id' => $confirmation_code, 'device_id' => '0', 'email_verified_at' => now(), 'is_type' => '2']);
+        return redirect()->route('register.success')->with('success', 'Akun Anda sudah aktif, silahkan login di aplikasi Kasir');
+    }
     public function konfirmasi($confirmation_code)
     {
-        $user = User::where('phone', $confirmation_code)->update(['booking_id' => $confirmation_code, 'device_id' => '0', 'email_verified_at' => now()]);
+        $user = User::where('phone', $confirmation_code)->update(['booking_id' => $confirmation_code, 'device_id' => '0', 'email_verified_at' => now(), 'is_type' => '3']);
         return redirect()->route('register.success')->with('success', 'Akun Anda sudah aktif, silahkan login di aplikasi Kasir');
     }
     public function registerSuccess()

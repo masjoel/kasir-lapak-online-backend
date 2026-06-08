@@ -65,11 +65,23 @@
                                                                 @if ($user->phone == $user->booking_id)
                                                                     <span class="badge badge-primary">Lifetime</span>
                                                                 @else
-                                                                    <a href='/konfirmasi/{{ $user->phone }}'
-                                                                        class="btn btn-sm btn-warning btn-icon"
+                                                                    <a href='/starter/{{ $user->phone }}'
+                                                                        class="btn btn-sm btn-info btn-icon"
                                                                         target="_blank">
                                                                         <i class="fas fa-edit"></i>
-                                                                        Approval
+                                                                        Starter
+                                                                    </a>
+                                                                    <a href='/basic/{{ $user->phone }}'
+                                                                        class="btn btn-sm btn-warning btn-icon mx-2"
+                                                                        target="_blank">
+                                                                        <i class="fas fa-edit"></i>
+                                                                        Basic
+                                                                    </a>
+                                                                    <a href='/konfirmasi/{{ $user->phone }}'
+                                                                        class="btn btn-sm btn-danger btn-icon"
+                                                                        target="_blank">
+                                                                        <i class="fas fa-edit"></i>
+                                                                        Pro
                                                                     </a>
                                                                 @endif
                                                                 @if ($user->device_id == 0)
