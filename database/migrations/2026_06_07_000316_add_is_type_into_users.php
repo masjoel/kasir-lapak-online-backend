@@ -20,6 +20,7 @@ return new class extends Migration
             ->update(['is_type' => 3]);
         DB::table('users')
             ->whereNotNull('booking_id')
+            ->where('booking_id', '<>', '')
             ->update(['is_type' => 3]);
     }
 
