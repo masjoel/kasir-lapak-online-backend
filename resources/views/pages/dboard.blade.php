@@ -45,7 +45,8 @@
                                                 <th>Name</th>
                                                 <th>Email</th>
                                                 <th>Roles</th>
-                                                <th>Reseller</th>
+                                                <th>Status</th>
+                                                <th>Marketing</th>
                                                 <th>Created At</th>
                                                 @if (auth()->user()->email == 'owner@tokopojok.com')
                                                     <th class="text-center">Action</th>
@@ -57,33 +58,40 @@
                                                     </td>
                                                     <td>{{ $user->email }}</td>
                                                     <td>{{ ucwords($user->roles) }}</td>
+                                                    <td>
+                                                        @if ($user->phone == $user->booking_id)
+                                                            <span class="badge badge-primary">Lifetime</span>
+                                                        @else
+                                                            <span class="badge badge-warning">Trial</span>
+                                                        @endif
+                                                    </td>
                                                     <td>{{ $user->marketing }}</td>
                                                     <td>{{ $user->created_at }}</td>
                                                     @if (auth()->user()->email == 'owner@tokopojok.com')
                                                         <td class="text-nowrap">
                                                             <div class="d-flex justify-content-center">
-                                                                @if ($user->phone == $user->booking_id)
+                                                                {{-- @if ($user->phone == $user->booking_id)
                                                                     <span class="badge badge-primary">Lifetime</span>
-                                                                @else
-                                                                    <a href='/starter/{{ $user->phone }}'
-                                                                        class="btn btn-sm btn-info btn-icon"
-                                                                        target="_blank">
-                                                                        <i class="fas fa-edit"></i>
-                                                                        Starter
-                                                                    </a>
-                                                                    <a href='/basic/{{ $user->phone }}'
-                                                                        class="btn btn-sm btn-warning btn-icon mx-2"
-                                                                        target="_blank">
-                                                                        <i class="fas fa-edit"></i>
-                                                                        Basic
-                                                                    </a>
-                                                                    <a href='/konfirmasi/{{ $user->phone }}'
-                                                                        class="btn btn-sm btn-danger btn-icon"
-                                                                        target="_blank">
-                                                                        <i class="fas fa-edit"></i>
-                                                                        Pro
-                                                                    </a>
-                                                                @endif
+                                                                @else --}}
+                                                                <a href='{{ $user->is_type == 1 ? '#' : '/starter/' . $user->phone }}'
+                                                                    class="btn btn-sm btn-{{ $user->is_type == 1 ? 'secondary' : 'info' }} btn-icon"
+                                                                    target="_blank">
+                                                                    <i class="fas fa-edit"></i>
+                                                                    Starter
+                                                                </a>
+                                                                <a href='{{ $user->is_type == 2 ? '#' : '/basic/' . $user->phone }}'
+                                                                    class="btn btn-sm btn-{{ $user->is_type == 2 ? 'secondary' : 'warning' }} btn-icon mx-2"
+                                                                    target="_blank">
+                                                                    <i class="fas fa-edit"></i>
+                                                                    Basic
+                                                                </a>
+                                                                <a href='{{ $user->is_type == 3 ? '#' : '/konfirmasi/' . $user->phone }}'
+                                                                    class="btn btn-sm btn-{{ $user->is_type == 3 ? 'secondary' : 'danger' }} btn-icon"
+                                                                    target="_blank">
+                                                                    <i class="fas fa-edit"></i>
+                                                                    Pro
+                                                                </a>
+                                                                {{-- @endif --}}
                                                                 @if ($user->device_id == 0)
                                                                     <span class="badge badge-secondary ml-2">Logout</span>
                                                                 @else
