@@ -20,6 +20,10 @@
                     <a href="{{ route('user.index') }}" class="nav-link {{ Request::is('user') ? 'active' : '' }}"><i
                             class="fas fa-users"></i><span>Users</span></a>
                 </li>
+                <li class="nav-item">
+                    <a href="{{ route('activation-code.index') }}" class="nav-link {{ Request::is('activation-code') ? 'active' : '' }}"><i
+                            class="fas fa-code"></i><span>Activation Codes</span></a>
+                </li>
             @endif
             {{-- <li class="nav-item">
                 <a href="{{ route('product.index') }}" class="nav-link {{ Request::is('product') ? 'active' : '' }}"><i class="fas fa-gift"></i><span>Products</span></a>

@@ -1,12 +1,13 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\UserController;
+use App\Http\Controllers\ActivationCodeController;
+use App\Http\Controllers\AutoNumberController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductController;
-use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\AutoNumberController;
 use App\Http\Controllers\ResellerController;
+use App\Http\Controllers\UserController;
+use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
@@ -35,6 +36,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/reseller/bayar', [ResellerController::class, 'bayar'])->name('reseller.bayar');
     Route::resource('product', ProductController::class);
     Route::resource('order', OrderController::class);
+    Route::resource('activation-code', ActivationCodeController::class);
 });
 Route::get('starter/{confirmation_code}', [UserController::class, 'starter'])->name('starter');
 Route::get('basic/{confirmation_code}', [UserController::class, 'basic'])->name('basic');
