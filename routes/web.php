@@ -38,6 +38,9 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('order', OrderController::class);
     Route::resource('activation-code', ActivationCodeController::class);
 });
+Route::get('upgrade-starter/{confirmation_code}', [UserController::class, 'upgradeStarter'])->name('upgrade-starter');
+Route::get('upgrade-basic/{confirmation_code}', [UserController::class, 'upgradeBasic'])->name('upgrade-basic');
+Route::get('upgrade-pro/{confirmation_code}', [UserController::class, 'upgradePro'])->name('upgrade-pro');
 Route::get('starter/{confirmation_code}', [UserController::class, 'starter'])->name('starter');
 Route::get('basic/{confirmation_code}', [UserController::class, 'basic'])->name('basic');
 Route::get('konfirmasi/{confirmation_code}', [UserController::class, 'konfirmasi'])->name('konfirmasi');

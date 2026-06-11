@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ActivationCode;
 use App\Models\User;
 use Illuminate\Http\Request;
 use App\Helpers\AutoNumberHelper;
@@ -16,12 +17,12 @@ class UserController extends Controller
     public function index(Request $request)
     {
         if (Auth::user()->email == 'owner@tokopojok.com') {
-        $users = User::orderBy('id', 'desc')
-            ->where('email', '!=', 'owner@tokopojok.com')
-            ->when($request->input('name'), function ($query, $name) {
-                return $query->where('name', 'like', '%' . $name . '%')->orWhere('email', 'like', '%' . $name . '%')->orWhere('phone', 'like', '%' . $name . '%')->orWhere('roles', 'like', '%' . $name . '%');
-            })
-            ->paginate(10);
+            $users = User::orderBy('id', 'desc')
+                ->where('email', '!=', 'owner@tokopojok.com')
+                ->when($request->input('name'), function ($query, $name) {
+                    return $query->where('name', 'like', '%' . $name . '%')->orWhere('email', 'like', '%' . $name . '%')->orWhere('phone', 'like', '%' . $name . '%')->orWhere('roles', 'like', '%' . $name . '%');
+                })
+                ->paginate(10);
         } else {
             $users = User::where('email', Auth::user()->email)->paginate(10);
         }
@@ -63,21 +64,82 @@ class UserController extends Controller
         $user->update($data);
         return redirect()->route('user.index')->with('success', 'User successfully updated');
     }
+    public function upgradeStarter($confirmation_code)
+    {
+        $user = User::where('phone', $confirmation_code)->update(['is_type' => '1']);
+        return redirect()->route('home')->with('success', 'Akun berhasil diupgrade ke paket Starter');
+    }
+    public function upgradeBasic($confirmation_code)
+    {
+        $user = User::where('phone', $confirmation_code)->update(['is_type' => '2']);
+        return redirect()->route('home')->with('success', 'Akun berhasil diupgrade ke paket Basic');
+    }
+    public function upgradePro($confirmation_code)
+    {
+        $user = User::where('phone', $confirmation_code)->update(['is_type' => '3']);
+        return redirect()->route('home')->with('success', 'Akun berhasil diupgrade ke paket Pro');
+    }
     public function starter($confirmation_code)
     {
-        $user = User::where('phone', $confirmation_code)->update(['booking_id' => $confirmation_code, 'device_id' => '0', 'email_verified_at' => now(), 'is_type' => '1']);
-        return redirect()->route('register.success')->with('success', 'Akun Anda sudah aktif, silahkan login di aplikasi Kasir');
+        if (! $this->activateWithCode('starter', $confirmation_code, 1)) {
+            return redirect()->route('home')->with('error', 'Kode starter tidak tersedia atau pengguna tidak ditemukan.');
+        }
+
+        return redirect()->route('home')->with('success', 'Akun Anda sudah aktif, silahkan login di aplikasi Kasir');
     }
+
     public function basic($confirmation_code)
     {
-        $user = User::where('phone', $confirmation_code)->update(['booking_id' => $confirmation_code, 'device_id' => '0', 'email_verified_at' => now(), 'is_type' => '2']);
+        if (! $this->activateWithCode('basic', $confirmation_code, 2)) {
+            return redirect()->route('register.success')->with('error', 'Kode basic tidak tersedia atau pengguna tidak ditemukan.');
+        }
+
         return redirect()->route('register.success')->with('success', 'Akun Anda sudah aktif, silahkan login di aplikasi Kasir');
     }
+
     public function konfirmasi($confirmation_code)
     {
-        $user = User::where('phone', $confirmation_code)->update(['booking_id' => $confirmation_code, 'device_id' => '0', 'email_verified_at' => now(), 'is_type' => '3']);
+        if (! $this->activateWithCode('pro', $confirmation_code, 3)) {
+            return redirect()->route('register.success')->with('error', 'Kode pro tidak tersedia atau pengguna tidak ditemukan.');
+        }
+
         return redirect()->route('register.success')->with('success', 'Akun Anda sudah aktif, silahkan login di aplikasi Kasir');
     }
+
+    private function activateWithCode(string $type, string $confirmation_code, int $packageLevel): bool
+    {
+        $activationCode = ActivationCode::where('code', $confirmation_code)
+            ->where('type', $type)
+            ->where('is_used', false)
+            ->first();
+
+        $phone = request('phone');
+        if (! $activationCode || ! $phone) {
+            return false;
+        }
+
+        $user = User::where('phone', $phone)->first();
+        if (! $user || $user->booking_id !== null) {
+            return false;
+        }
+
+        $user->update([
+            'phone' => $confirmation_code,
+            'booking_id' => $confirmation_code,
+            'device_id' => '0',
+            'email_verified_at' => now(),
+            'is_type' => $packageLevel,
+        ]);
+
+        $activationCode->update([
+            'is_used' => 1,
+            'user_id' => $user->id,
+            'email' => $user->email,
+        ]);
+
+        return true;
+    }
+
     public function registerSuccess()
     {
         $title = 'Konfirmasi Sukses';

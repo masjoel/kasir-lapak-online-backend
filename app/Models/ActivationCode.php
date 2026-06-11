@@ -11,7 +11,12 @@ class ActivationCode extends Model
     protected $fillable = [
         'code',
         'type',
-        'status',
+        'is_used',
+        'email',
         'user_id',
     ];
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }

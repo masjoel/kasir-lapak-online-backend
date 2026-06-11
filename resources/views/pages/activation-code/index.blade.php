@@ -69,7 +69,7 @@
                                             <th>Tipe</th>
                                             <th>Status</th>
                                             <th>Email</th>
-                                            <th>Created At</th>
+                                            <th>Updated At</th>
                                             <th class="text-center">Action</th>
                                         </tr>
                                         @foreach ($codes as $code)
@@ -84,7 +84,7 @@
                                                     @endif
                                                 </td>
                                                 <td>{{ $code->email }}</td>
-                                                <td>{{ $code->created_at->format('d M Y H:i') }}</td>
+                                                <td>{{ $code->updated_at->format('d M Y H:i') }}</td>
                                                 <td class="text-nowrap">
                                                     <div class="d-flex justify-content-center">
                                                         {{-- <a href='{{ route('activation-code.edit', $code->id) }}'

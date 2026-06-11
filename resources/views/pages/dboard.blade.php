@@ -70,28 +70,37 @@
                                                     @if (auth()->user()->email == 'owner@tokopojok.com')
                                                         <td class="text-nowrap">
                                                             <div class="d-flex justify-content-center">
-                                                                {{-- @if ($user->phone == $user->booking_id)
-                                                                    <span class="badge badge-primary">Lifetime</span>
-                                                                @else --}}
-                                                                <a href='{{ $user->is_type == 1 ? '#' : '/starter/' . $user->phone }}'
-                                                                    class="btn btn-sm btn-{{ $user->is_type == 1 ? 'secondary' : 'info' }} btn-icon"
-                                                                    target="_blank">
+                                                                @php
+                                                                    // $starterAvailable =
+                                                                    //     is_null($user->booking_id) &&
+                                                                    //     isset($starterCode);
+                                                                    // $basicAvailable =
+                                                                    //     is_null($user->booking_id) && isset($basicCode);
+                                                                    // $proAvailable =
+                                                                    //     is_null($user->booking_id) && isset($proCode);
+                                                                    $starterAvailable = $user->is_type == 1;
+                                                                    $basicAvailable = $user->is_type == 2;
+                                                                    $proAvailable = $user->is_type == 3;
+                                                                    $upgradeAvailable = $user->is_type > 0 && $user->is_type <= 3;
+                                                                @endphp
+                                                                <a href="{{ ($starterAvailable ? '#' : $upgradeAvailable) ? route('upgrade-starter', $user->phone) : route('starter', $starterCode->code) . '?phone=' . $user->phone }}"
+                                                                    class="btn btn-sm btn-{{ $starterAvailable ? 'secondary' : 'info' }} btn-icon"
+                                                                    {{ $starterAvailable ? '' : 'aria-disabled=true tabindex=-1' }}>
                                                                     <i class="fas fa-edit"></i>
                                                                     Starter
                                                                 </a>
-                                                                <a href='{{ $user->is_type == 2 ? '#' : '/basic/' . $user->phone }}'
-                                                                    class="btn btn-sm btn-{{ $user->is_type == 2 ? 'secondary' : 'warning' }} btn-icon mx-2"
-                                                                    target="_blank">
+                                                                <a href="{{ ($basicAvailable ? '#' : $upgradeAvailable) ? route('upgrade-basic', $user->phone) : route('basic', $basicCode->code) . '?phone=' . $user->phone }}"
+                                                                    class="btn btn-sm btn-{{ $basicAvailable ? 'secondary' : 'warning' }} btn-icon mx-2"
+                                                                    {{ $basicAvailable ? '' : 'aria-disabled=true tabindex=-1' }}>
                                                                     <i class="fas fa-edit"></i>
                                                                     Basic
                                                                 </a>
-                                                                <a href='{{ $user->is_type == 3 ? '#' : '/konfirmasi/' . $user->phone }}'
-                                                                    class="btn btn-sm btn-{{ $user->is_type == 3 ? 'secondary' : 'danger' }} btn-icon"
-                                                                    target="_blank">
+                                                                <a href="{{ ($proAvailable ? '#' : $upgradeAvailable) ? route('upgrade-pro', $user->phone) : route('konfirmasi', $proCode->code) . '?phone=' . $user->phone }}"
+                                                                    class="btn btn-sm btn-{{ $proAvailable ? 'secondary' : 'danger' }} btn-icon"
+                                                                    {{ $proAvailable ? '' : 'aria-disabled=true tabindex=-1' }}>
                                                                     <i class="fas fa-edit"></i>
                                                                     Pro
                                                                 </a>
-                                                                {{-- @endif --}}
                                                                 @if ($user->device_id == 0)
                                                                     <span class="badge badge-secondary ml-2">Logout</span>
                                                                 @else

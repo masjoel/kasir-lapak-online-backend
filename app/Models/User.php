@@ -42,4 +42,8 @@ class User extends Authenticatable
     {
         return $this->hasMany(Reseller::class, 'reseller_id', 'marketing');
     }
+    public function activationCode()
+    {
+        return $this->hasMany(ActivationCode::class);
+    }
 }
