@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\ActivationCode;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class ActivationCodeController extends Controller
@@ -84,5 +85,76 @@ class ActivationCodeController extends Controller
     public function destroy(ActivationCode $activationCode)
     {
         //
+    }
+
+    // public function activateWithCode(string $email, string $type, string $code, int $packageLevel): bool
+    // {
+    //     $activationCode = ActivationCode::where('code', $code)
+    //         ->where('type', $type)
+    //         ->where('is_used', false)
+    //         ->first();
+
+    //     if (! $activationCode || ! $email) {
+    //         return false;
+    //     }
+
+    //     $user = User::where('email', $email)->first();
+    //     if (! $user || $user->booking_id !== null) {
+    //         return false;
+    //     }
+
+    //     $user->update([
+    //         'phone' => $code,
+    //         'booking_id' => $code,
+    //         'device_id' => '0',
+    //         'email_verified_at' => now(),
+    //         'is_type' => $packageLevel,
+    //     ]);
+
+    //     $activationCode->update([
+    //         'is_used' => 1,
+    //         'user_id' => $user->id,
+    //         'email' => $user->email,
+    //     ]);
+
+    //     return redirect()->route('register.success')->with('success', 'Akun Anda sudah aktif, silahkan login di aplikasi Kasir');
+    // }
+    public function activateWithCode(Request $request)
+    {
+        $data = $request->validate([
+            'code' => 'required|string|exists:activation_codes,code',
+            'type' => 'required|string|in:starter,basic,pro',
+            'email' => 'required|email',
+        ]);
+        $activationCode = ActivationCode::where('code', $data['code'])
+            ->where('type', $data['type'])
+            ->first();
+
+        if (! $activationCode) {
+            return redirect()->route('activation-code.index')->with('error', 'Activation code tidak ditemukan.');
+        }
+        $user = User::where('email', $data['email'])->first();
+        if (!$user) {
+            return redirect()->route('activation-code.index')->with('error', 'Email tidak ditemukan atau tidak valid.');
+        }
+        if (!empty($user->booking_id)) {
+            return redirect()->route('activation-code.index')->with('error', 'Email sudah digunakan atau tidak valid.');
+        }
+
+        $user->update([
+            'phone' => $data['code'],
+            'booking_id' => $data['code'],
+            'device_id' => '0',
+            'email_verified_at' => now(),
+            'is_type' => $data['type'] === 'starter' ? 1 : ($data['type'] === 'basic' ? 2 : 3),
+        ]);
+
+        $activationCode->update([
+            'is_used' => 1,
+            'user_id' => $user->id,
+            'email' => $user->email,
+        ]);
+
+        return redirect()->route('activation-code.index')->with('success', 'Email berhasil disimpan ke activation code.');
     }
 }

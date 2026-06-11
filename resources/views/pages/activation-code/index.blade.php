@@ -92,6 +92,16 @@
                                                             <i class="fas fa-edit"></i>
                                                             Edit
                                                         </a> --}}
+                                                        @if ($code->is_used == false)
+                                                            <a href='#'
+                                                                class="ml-2 btn btn-sm btn-warning btn-icon activate-code-btn"
+                                                                data-code="{{ $code->code }}"
+                                                                data-type="{{ ucwords($code->type) }}"
+                                                                data-email="{{ $code->email }}">
+                                                                <i class="fas fa-code"></i>
+                                                                Activate
+                                                            </a>
+                                                        @endif
                                                         <a href='#'
                                                             class="ml-2 btn btn-sm btn-success btn-icon print-activation-code"
                                                             data-code="{{ $code->code }}"
@@ -118,6 +128,38 @@
                     </div>
                 </div>
             </div>
+    </div>
+    </section>
+
+    <div class="modal fade" id="activationModal" tabindex="-1" role="dialog" aria-labelledby="activationModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="activationModalLabel">Activate Code</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form id="activationModalForm" action="{{ route('activate-with-code') }}" method="POST">
+                    @csrf
+                    <div class="modal-body">
+                        <input type="hidden" name="code" id="activation-code">
+                        <input type="hidden" name="type" id="activation-type">
+                        <div class="form-group">
+                            <label for="activation-email">Email</label>
+                            <input type="email" class="form-control" id="activation-email" name="email"
+                                placeholder="Masukkan email pengguna" required>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary" id="activationModalSave">Save</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
     </div>
     </section>
     </div>
@@ -217,6 +259,28 @@
                 printWindow.close();
             };
         }
+
+        $(document).on('click', 'a.activate-code-btn', function(e) {
+            e.preventDefault();
+            let code = $(this).data('code');
+            let type = $(this).data('type');
+            let email = $(this).data('email') || '';
+
+            $('#activationModalLabel').text('Activate ' + type + ' Code');
+            $('#activation-code').val(code);
+            $('#activation-type').val(type.toLowerCase());
+            $('#activation-email').val(email);
+            $('#activationModal').modal('show');
+        });
+
+        $('#activationModalForm').on('submit', function(e) {
+            let email = $('#activation-email').val();
+            if (!email) {
+                e.preventDefault();
+                alert('Email harus diisi.');
+                return;
+            }
+        });
 
         function printActivationCode(code, type) {
             let printWindow = window.open('', '_blank', 'width=520,height=360');

@@ -44,4 +44,5 @@ Route::get('upgrade-pro/{confirmation_code}', [UserController::class, 'upgradePr
 Route::get('starter/{confirmation_code}', [UserController::class, 'starter'])->name('starter');
 Route::get('basic/{confirmation_code}', [UserController::class, 'basic'])->name('basic');
 Route::get('konfirmasi/{confirmation_code}', [UserController::class, 'konfirmasi'])->name('konfirmasi');
+Route::post('activate-with-code', [ActivationCodeController::class, 'activateWithCode'])->name('activate-with-code');
 Route::get('register-success', [UserController::class, 'registerSuccess'])->name('register.success');
