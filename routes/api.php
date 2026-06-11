@@ -46,3 +46,4 @@ Route::get('/sync/cash_categories', [CategoryController::class, 'getUpdateCashCa
 Route::post('/sync/products', [ProductController::class, 'syncProducts'])->middleware('auth:sanctum');
 Route::get('/sync/products', [ProductController::class, 'getUpdateProducts']);
 Route::get('/verify-type', [AuthController::class, 'verifyType'])->middleware('auth:sanctum');
+Route::post('activate-code', [AuthController::class, 'activateWithCode'])->name('activate-code');

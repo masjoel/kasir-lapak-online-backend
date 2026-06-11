@@ -2,14 +2,15 @@
 
 namespace App\Http\Controllers\Api;
 
-use Exception;
-use App\Models\User;
-use App\Mail\KirimEmail;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\ProspectResource;
 use App\Http\Resources\UserResource;
+use App\Mail\KirimEmail;
+use App\Models\ActivationCode;
+use App\Models\User;
+use Exception;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Validation\ValidationException;
@@ -230,8 +231,6 @@ class AuthController extends Controller
             'two_factor_secret' => $user->two_factor_recovery_codes,
             'two_factor_recovery_codes' => null,
         ]);
-        // Hapus semua token
-        // $user->tokens()->delete();
         $request->user()->currentAccessToken()->delete();
 
         return response()->json([
@@ -239,39 +238,60 @@ class AuthController extends Controller
         ], 200);
     }
 
-    // public function logout(Request $request)
-    // {
-    //     // $email = $request->json('email'); // Ambil dari JSON
-    //     $email = $request->email;
-    //     $user = User::where('email', $email)->first();
-    //     // hitung selisih tanggal created_at dengan hari ini
-    //     // $diff = now()->diffInDays($user->created_at);
-    //     // if ($diff > 7) {
-    //     // }
-    //     // cek booking id
-    //     if ($user->booking_id == $user->phone) {
-    //     // if ($user->phone !== null) {
-    //         $updDevice['device_id'] = '0';
-    //         $updDevice['two_factor_secret'] = $user->two_factor_recovery_codes;
-    //         $updDevice['two_factor_recovery_codes'] = null;
-    //         $user->update($updDevice);
-    //     }
-    //     $request->user()->tokens()->delete();
-    //     return response()->json([
-    //         'message' => 'logout successfully ' . $user->device_id,
-    //     ]);
-    // }
-
-    // Route: GET /api/verify-type (pakai middleware auth:sanctum)
     public function verifyType(Request $request)
     {
         $user      = $request->user();
         $typeToken = hash_hmac('sha256', $user->id . $user->is_type, config('app.key'));
-
         return response()->json([
             'is_type'    => $user->is_type,
             'type_token' => $typeToken,
             'last_sync'  => now(),
+        ]);
+    }
+    public function activateWithCode(Request $request)
+    {
+        $data = $request->validate([
+            'code' => 'required|string',
+            'email' => 'required|email',
+        ]);
+        $activationCode = ActivationCode::where('code', $data['code'])
+            ->first();
+
+        if (!$activationCode) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Kode Aktivasi tidak ditemukan.',
+            ]);
+        }
+        if ($activationCode->is_used) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Kode Aktivasi sudah digunakan.',
+            ]);
+        }
+        $user = User::where('email', $data['email'])->first();
+        if (!$user) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Email tidak ditemukan atau tidak valid.',
+            ]);
+        }
+        $user->update([
+            'phone' => $data['code'],
+            'booking_id' => $data['code'],
+            'device_id' => '0',
+            'email_verified_at' => now(),
+            'is_type' => $activationCode->type === 'starter' ? 1 : ($activationCode->type === 'basic' ? 2 : 3),
+        ]);
+
+        $activationCode->update([
+            'is_used' => 1,
+            'user_id' => $user->id,
+            'email' => $user->email,
+        ]);
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Kode Aktivasi berhasil digunakan.',
         ]);
     }
 }

@@ -87,38 +87,6 @@ class ActivationCodeController extends Controller
         //
     }
 
-    // public function activateWithCode(string $email, string $type, string $code, int $packageLevel): bool
-    // {
-    //     $activationCode = ActivationCode::where('code', $code)
-    //         ->where('type', $type)
-    //         ->where('is_used', false)
-    //         ->first();
-
-    //     if (! $activationCode || ! $email) {
-    //         return false;
-    //     }
-
-    //     $user = User::where('email', $email)->first();
-    //     if (! $user || $user->booking_id !== null) {
-    //         return false;
-    //     }
-
-    //     $user->update([
-    //         'phone' => $code,
-    //         'booking_id' => $code,
-    //         'device_id' => '0',
-    //         'email_verified_at' => now(),
-    //         'is_type' => $packageLevel,
-    //     ]);
-
-    //     $activationCode->update([
-    //         'is_used' => 1,
-    //         'user_id' => $user->id,
-    //         'email' => $user->email,
-    //     ]);
-
-    //     return redirect()->route('register.success')->with('success', 'Akun Anda sudah aktif, silahkan login di aplikasi Kasir');
-    // }
     public function activateWithCode(Request $request)
     {
         $data = $request->validate([
