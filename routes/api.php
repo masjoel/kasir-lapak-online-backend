@@ -47,3 +47,4 @@ Route::post('/sync/products', [ProductController::class, 'syncProducts'])->middl
 Route::get('/sync/products', [ProductController::class, 'getUpdateProducts']);
 Route::get('/verify-type', [AuthController::class, 'verifyType'])->middleware('auth:sanctum');
 Route::post('activate-code', [AuthController::class, 'activateWithCode'])->name('activate-code');
+Route::post('reset-password', [AuthController::class, 'resetPassword'])->middleware('auth:sanctum');

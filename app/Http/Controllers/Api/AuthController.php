@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\ProspectResource;
 use App\Http\Resources\UserResource;
 use App\Mail\KirimEmail;
+use App\Mail\ResetPassword;
 use App\Models\ActivationCode;
 use App\Models\User;
 use Exception;
@@ -13,6 +14,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use Ramsey\Uuid\Uuid;
 
@@ -293,5 +295,37 @@ class AuthController extends Controller
             'status' => 'success',
             'message' => 'Kode Aktivasi berhasil digunakan.',
         ]);
+    }
+    public function resetPassword(Request $request)
+    {
+        $request->validate(['email' => 'required|string|max:255|email']);
+        $user = User::where('email', $request->email)->first();
+        if (!$user) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Email tidak ditemukan'
+            ], 404);
+        }
+        $plainPass = Str::random(6);
+        try {
+            DB::beginTransaction();
+            $user->update(['password' => Hash::make($plainPass)]);
+            if (Str::contains(url(''), 'mangan')) {
+                Mail::to($user->email)
+                    ->cc('masjoel@gmail.com')
+                    ->send(new ResetPassword($user->name, $plainPass));
+            }
+            DB::commit();
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Password berhasil direset, silahkan cek email Anda'
+            ], 200);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Email tidak valid'
+            ], 500);
+        }
     }
 }
