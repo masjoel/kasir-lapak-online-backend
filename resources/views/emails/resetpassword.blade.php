@@ -59,7 +59,7 @@
             <p>Anda telah melakukan permintaan RESET PASSWORD. Saat ini password telah direset oleh sistem kami. </p>
             <p>Silakan gunakan password berikut ini :</p>
             <h2>{{ $password }}</h2>
-            <p>Untuk keamanan, kami merekomendasikan Anda untuk mengganti password Anda secara berkala.</p>
+            <p>Untuk keamanan, kami merekomendasikan Anda untuk mengganti password secara berkala.</p>
         </div>
         <div class="footer">
             &copy; 2026 Kasir Lapak - Aplikasi Kasir Modern UMKM.<br>
