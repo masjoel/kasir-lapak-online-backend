@@ -310,7 +310,7 @@ class AuthController extends Controller
         try {
             DB::beginTransaction();
             $user->update(['password' => Hash::make($plainPass)]);
-            if (Str::contains(url(''), 'mangan')) {
+            if (Str::contains(url(''), 'kasirlapak')) {
                 Mail::to($user->email)
                     ->cc('masjoel@gmail.com')
                     ->send(new ResetPassword($user->name, $plainPass));
