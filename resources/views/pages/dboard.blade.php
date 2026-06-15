@@ -105,13 +105,6 @@
                                                         <td class="text-nowrap">
                                                             <div class="d-flex justify-content-center">
                                                                 @php
-                                                                    // $starterAvailable =
-                                                                    //     is_null($user->booking_id) &&
-                                                                    //     isset($starterCode);
-                                                                    // $basicAvailable =
-                                                                    //     is_null($user->booking_id) && isset($basicCode);
-                                                                    // $proAvailable =
-                                                                    //     is_null($user->booking_id) && isset($proCode);
                                                                     $starterAvailable = $user->is_type == 1;
                                                                     $basicAvailable = $user->is_type == 2;
                                                                     $proAvailable = $user->is_type == 3;

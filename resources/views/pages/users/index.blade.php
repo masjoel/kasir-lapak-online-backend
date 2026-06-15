@@ -107,7 +107,21 @@
                                                         <span class="badge badge-success">Login</span>
                                                     @endif
                                                 </td>
-                                                <td>{{ $user->telpon ?? '' }}</td>
+                                                <td class="text-nowrap">
+                                                    @if ($user->telpon ?? '')
+                                                        @php
+                                                            $wa = preg_replace('/\D/', '', $user->telpon ?? '');
+                                                            $wa = ltrim($wa, '0');
+                                                            $wa = '62' . $wa;
+                                                        @endphp
+                                                        <a href="https://wa.me/{{ $wa }}" target="_blank" title="Chat WA {{ $user->telpon }}">
+                                                            <i class="fab fa-whatsapp text-success"></i>
+                                                            {{ $user->telpon }}
+                                                        </a>
+                                                    @else
+                                                        -
+                                                    @endif
+                                                </td>
                                                 <td class="text-nowrap">
                                                     @if ($user->is_type == 0)
                                                         <span class="badge badge-secondary">Trial</span>
