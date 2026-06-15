@@ -20,7 +20,15 @@ class UserController extends Controller
             $users = User::orderBy('id', 'desc')
                 ->where('email', '!=', 'owner@tokopojok.com')
                 ->when($request->input('name'), function ($query, $name) {
-                    return $query->where('name', 'like', '%' . $name . '%')->orWhere('email', 'like', '%' . $name . '%')->orWhere('phone', 'like', '%' . $name . '%')->orWhere('roles', 'like', '%' . $name . '%');
+                    return $query->where(function ($q) use ($name) {
+                        $q->where('name', 'like', '%' . $name . '%')
+                          ->orWhere('email', 'like', '%' . $name . '%')
+                          ->orWhere('phone', 'like', '%' . $name . '%')
+                          ->orWhere('roles', 'like', '%' . $name . '%');
+                    });
+                })
+                ->when($request->input('is_type') !== null && $request->input('is_type') !== '', function ($query) use ($request) {
+                    return $query->where('is_type', $request->input('is_type'));
                 })
                 ->paginate(10);
         } else {
@@ -28,6 +36,70 @@ class UserController extends Controller
         }
         return view('pages.users.index', compact('users'));
     }
+
+    public function export(Request $request)
+    {
+        $typeLabels = [0 => 'Trial', 1 => 'Starter', 2 => 'Basic', 3 => 'Pro'];
+
+        $query = User::orderBy('id', 'desc')
+            ->where('email', '!=', 'owner@tokopojok.com')
+            ->when($request->input('name'), function ($q, $name) {
+                return $q->where(function ($q2) use ($name) {
+                    $q2->where('name', 'like', '%' . $name . '%')
+                       ->orWhere('email', 'like', '%' . $name . '%')
+                       ->orWhere('phone', 'like', '%' . $name . '%')
+                       ->orWhere('roles', 'like', '%' . $name . '%');
+                });
+            })
+            ->when($request->input('is_type') !== null && $request->input('is_type') !== '', function ($q) use ($request) {
+                return $q->where('is_type', $request->input('is_type'));
+            });
+
+        $users = $query->get(['id', 'name', 'email', 'roles', 'is_type', 'marketing', 'phone', 'booking_id', 'device_id', 'created_at']);
+
+        $filename = 'users_' . now()->format('Ymd_His') . '.csv';
+
+        $headers = [
+            'Content-Type'        => 'text/csv; charset=UTF-8',
+            'Content-Disposition' => 'attachment; filename="' . $filename . '"',
+            'Pragma'              => 'no-cache',
+            'Cache-Control'       => 'must-revalidate, post-check=0, pre-check=0',
+            'Expires'             => '0',
+        ];
+
+        $callback = function () use ($users, $typeLabels) {
+            $handle = fopen('php://output', 'w');
+
+            // BOM untuk Excel agar UTF-8 terbaca dengan benar
+            fprintf($handle, chr(0xEF) . chr(0xBB) . chr(0xBF));
+
+            // Header kolom
+            fputcsv($handle, ['ID', 'Name', 'Email', 'Roles', 'Type', 'Reseller', 'Subscription', 'Login Status', 'Created At']);
+
+            foreach ($users as $user) {
+                $type        = $typeLabels[$user->is_type] ?? '-';
+                $subscription = ($user->phone == $user->booking_id) ? 'Lifetime' : 'Trial';
+                $loginStatus  = ($user->device_id != 0) ? 'Login' : 'Logout';
+
+                fputcsv($handle, [
+                    $user->id,
+                    $user->name,
+                    $user->email,
+                    ucwords($user->roles),
+                    $type,
+                    $user->marketing,
+                    $subscription,
+                    $loginStatus,
+                    $user->created_at,
+                ]);
+            }
+
+            fclose($handle);
+        };
+
+        return response()->stream($callback, 200, $headers);
+    }
+
 
     public function create()
     {

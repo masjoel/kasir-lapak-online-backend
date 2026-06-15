@@ -38,6 +38,12 @@
                         <div class="card">
                             <div class="card-header">
                                 <h4>All Users</h4>
+                                <div class="card-header-action">
+                                    <a href="{{ route('user.export', array_filter(['name' => request('name'), 'is_type' => request('is_type')], fn($v) => $v !== null && $v !== '')) }}"
+                                        class="btn btn-success">
+                                        <i class="fas fa-file-excel"></i> Export Excel
+                                    </a>
+                                </div>
                             </div>
                             <div class="card-body">
                                 {{-- <div class="float-left">
@@ -49,9 +55,16 @@
                                     </select>
                                 </div> --}}
                                 <div class="float-right">
-                                    <form method="GET" action="{{ route('user.index') }}">
+                                    <form method="GET" action="{{ route('user.index') }}" class="d-flex align-items-center" style="gap: 8px;">
+                                        <select class="form-control" name="is_type" style="min-width: 140px;">
+                                            <option value="">-- All Type --</option>
+                                            <option value="0" {{ request('is_type') === '0' ? 'selected' : '' }}>Trial</option>
+                                            <option value="1" {{ request('is_type') == '1' ? 'selected' : '' }}>Starter</option>
+                                            <option value="2" {{ request('is_type') == '2' ? 'selected' : '' }}>Basic</option>
+                                            <option value="3" {{ request('is_type') == '3' ? 'selected' : '' }}>Pro</option>
+                                        </select>
                                         <div class="input-group">
-                                            <input type="text" class="form-control" placeholder="Search" name="name">
+                                            <input type="text" class="form-control" placeholder="Search" name="name" value="{{ request('name') }}">
                                             <div class="input-group-append">
                                                 <button class="btn btn-primary"><i class="fas fa-search"></i></button>
                                             </div>
@@ -68,6 +81,7 @@
                                             <th>Email</th>
                                             <th>Roles</th>
                                             <th>Status</th>
+                                            <th>Type</th>
                                             <th>Reseller</th>
                                             <th>Created At</th>
                                             @if (auth()->user()->email == 'owner@tokopojok.com')
@@ -90,6 +104,19 @@
                                                         <span class="badge badge-secondary">Logout</span>
                                                     @else
                                                         <span class="badge badge-success">Login</span>
+                                                    @endif
+                                                </td>
+                                                <td class="text-nowrap">
+                                                    @if ($user->is_type == 0)
+                                                        <span class="badge badge-secondary">Trial</span>
+                                                    @elseif ($user->is_type == 1)
+                                                        <span class="badge badge-info">Starter</span>
+                                                    @elseif ($user->is_type == 2)
+                                                        <span class="badge badge-primary">Basic</span>
+                                                    @elseif ($user->is_type == 3)
+                                                        <span class="badge badge-success">Pro</span>
+                                                    @else
+                                                        <span class="badge badge-light">-</span>
                                                     @endif
                                                 </td>
                                                 <td>{{ $user->marketing }}</td>

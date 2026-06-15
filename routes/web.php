@@ -31,7 +31,9 @@ Route::middleware(['auth'])->group(function () {
     // })->name('home');
     Route::get('home', [DashboardController::class, 'index'])->name('home');
     Route::post('home', [DashboardController::class, 'index'])->name('home.post');
+    Route::get('home-export', [DashboardController::class, 'export'])->name('home.export');
     Route::resource('user', UserController::class);
+    Route::get('user-export', [UserController::class, 'export'])->name('user.export');
     Route::resource('reseller', ResellerController::class);
     Route::post('/reseller/bayar', [ResellerController::class, 'bayar'])->name('reseller.bayar');
     Route::resource('product', ProductController::class);
