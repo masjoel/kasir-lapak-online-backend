@@ -47,7 +47,7 @@ class UserController extends Controller
                 return $q->where(function ($q2) use ($name) {
                     $q2->where('name', 'like', '%' . $name . '%')
                        ->orWhere('email', 'like', '%' . $name . '%')
-                       ->orWhere('phone', 'like', '%' . $name . '%')
+                       ->orWhere('telpon', 'like', '%' . $name . '%')
                        ->orWhere('roles', 'like', '%' . $name . '%');
                 });
             })
@@ -55,7 +55,7 @@ class UserController extends Controller
                 return $q->where('is_type', $request->input('is_type'));
             });
 
-        $users = $query->get(['id', 'name', 'email', 'roles', 'is_type', 'marketing', 'phone', 'booking_id', 'device_id', 'created_at']);
+        $users = $query->get(['id', 'name', 'email', 'roles', 'telpon', 'is_type', 'marketing', 'phone', 'booking_id', 'device_id', 'created_at']);
 
         $filename = 'users_' . now()->format('Ymd_His') . '.csv';
 
@@ -74,7 +74,7 @@ class UserController extends Controller
             fprintf($handle, chr(0xEF) . chr(0xBB) . chr(0xBF));
 
             // Header kolom
-            fputcsv($handle, ['ID', 'Name', 'Email', 'Roles', 'Type', 'Reseller', 'Subscription', 'Login Status', 'Created At']);
+            fputcsv($handle, ['ID', 'Name', 'Email', 'Roles', 'Telpon', 'Type', 'Reseller', 'Subscription', 'Login Status', 'Created At']);
 
             foreach ($users as $user) {
                 $type        = $typeLabels[$user->is_type] ?? '-';
@@ -86,6 +86,7 @@ class UserController extends Controller
                     $user->name,
                     $user->email,
                     ucwords($user->roles),
+                    $user->telpon,
                     $type,
                     $user->marketing,
                     $subscription,

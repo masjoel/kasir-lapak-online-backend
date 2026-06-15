@@ -81,6 +81,7 @@
                                             <th>Email</th>
                                             <th>Roles</th>
                                             <th>Status</th>
+                                            <th>Phone</th>
                                             <th>Type</th>
                                             <th>Reseller</th>
                                             <th>Created At</th>
@@ -106,6 +107,7 @@
                                                         <span class="badge badge-success">Login</span>
                                                     @endif
                                                 </td>
+                                                <td>{{ $user->telpon ?? '' }}</td>
                                                 <td class="text-nowrap">
                                                     @if ($user->is_type == 0)
                                                         <span class="badge badge-secondary">Trial</span>

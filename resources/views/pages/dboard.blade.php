@@ -32,13 +32,18 @@
                                 </div>
                                 <div class="card-body">
                                     <div class="float-right">
-                                        <form method="GET" action="{{ route('home') }}" class="d-flex align-items-center" style="gap: 8px;">
+                                        <form method="GET" action="{{ route('home') }}" class="d-flex align-items-center"
+                                            style="gap: 8px;">
                                             <select class="form-control" name="is_type" style="min-width: 140px;">
                                                 <option value="">-- All Type --</option>
-                                                <option value="0" {{ request('is_type') === '0' ? 'selected' : '' }}>Trial</option>
-                                                <option value="1" {{ request('is_type') == '1' ? 'selected' : '' }}>Starter</option>
-                                                <option value="2" {{ request('is_type') == '2' ? 'selected' : '' }}>Basic</option>
-                                                <option value="3" {{ request('is_type') == '3' ? 'selected' : '' }}>Pro</option>
+                                                <option value="0" {{ request('is_type') === '0' ? 'selected' : '' }}>
+                                                    Trial</option>
+                                                <option value="1" {{ request('is_type') == '1' ? 'selected' : '' }}>
+                                                    Starter</option>
+                                                <option value="2" {{ request('is_type') == '2' ? 'selected' : '' }}>
+                                                    Basic</option>
+                                                <option value="3" {{ request('is_type') == '3' ? 'selected' : '' }}>Pro
+                                                </option>
                                             </select>
                                             <div class="input-group">
                                                 <input type="text" class="form-control" placeholder="Search"
@@ -59,6 +64,7 @@
                                                 <th>Email</th>
                                                 <th>Roles</th>
                                                 <th>Status</th>
+                                                <th>Phone</th>
                                                 <th>Type</th>
                                                 <th>Marketing</th>
                                                 <th>Created At</th>
@@ -79,6 +85,7 @@
                                                             <span class="badge badge-warning">Trial</span>
                                                         @endif
                                                     </td>
+                                                    <td>{{ $user->telpon ?? '' }}</td>
                                                     <td class="text-nowrap">
                                                         @if ($user->is_type == 0)
                                                             <span class="badge badge-secondary">Trial</span>
@@ -108,7 +115,8 @@
                                                                     $starterAvailable = $user->is_type == 1;
                                                                     $basicAvailable = $user->is_type == 2;
                                                                     $proAvailable = $user->is_type == 3;
-                                                                    $upgradeAvailable = $user->is_type > 0 && $user->is_type <= 3;
+                                                                    $upgradeAvailable =
+                                                                        $user->is_type > 0 && $user->is_type <= 3;
                                                                 @endphp
                                                                 <a href="{{ ($starterAvailable ? '#' : $upgradeAvailable) ? route('upgrade-starter', $user->phone) : route('starter', $starterCode->code) . '?phone=' . $user->phone }}"
                                                                     class="btn btn-sm btn-{{ $starterAvailable ? 'secondary' : 'info' }} btn-icon"
